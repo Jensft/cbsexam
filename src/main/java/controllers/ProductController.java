@@ -3,6 +3,8 @@ package controllers;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
+import cache.ProductCache;
 import model.Product;
 import utils.Log;
 
@@ -12,6 +14,7 @@ public class ProductController {
 
   public ProductController() {
     dbCon = new DatabaseController();
+    ProductCache productCache = new ProductCache();
   }
 
   public static Product getProduct(int id) {
@@ -92,12 +95,11 @@ public class ProductController {
    * @return
    */
   public static ArrayList<Product> getProducts() {
-
-    if (dbCon == null) {
+        if (dbCon == null) {
       dbCon = new DatabaseController();
     }
 
-    // TODO: Use caching layer.
+    // TODO: Use caching layer. FIX, it is added in ProductEndpoints
     String sql = "SELECT * FROM product";
 
     ResultSet rs = dbCon.query(sql);

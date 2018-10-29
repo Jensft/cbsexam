@@ -21,8 +21,16 @@ public final class Config {
   private static String SOLR_CORE;
   private static long PRODUCT_TTL;
 
+  //TTL for userCache
+  private static long User_TTL;
+
   public static long getProductTtl() {
     return PRODUCT_TTL;
+  }
+
+  // get User TTL
+  public  static long getUser_TTL() {
+    return User_TTL;
   }
 
   public static String getDatabaseHost() {
@@ -99,5 +107,6 @@ public final class Config {
     SOLR_PATH = json.get("SOLR_PATH").toString().replace("\"", "");
     SOLR_CORE = json.get("SOLR_CORE").toString().replace("\"", "");
     PRODUCT_TTL = json.get("PRODUCT_TTL").getAsLong();
+    User_TTL = json.get("USER_TTL").getAsLong();
   }
 }
