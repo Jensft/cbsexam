@@ -20,9 +20,10 @@ public final class Config {
   private static String SOLR_PATH;
   private static String SOLR_CORE;
   private static long PRODUCT_TTL;
+  private static String ENCRYPTION_KEY;
 
   //TTL for userCache
-  private static long User_TTL;
+  private static long USER_TTL;
 
   public static long getProductTtl() {
     return PRODUCT_TTL;
@@ -30,8 +31,14 @@ public final class Config {
 
   // get User TTL
   public  static long getUser_TTL() {
-    return User_TTL;
+    return USER_TTL;
   }
+
+  // Encryption key
+  public static char[] getEncryptionKey(){
+    return ENCRYPTION_KEY.toCharArray();
+  }
+
 
   public static String getDatabaseHost() {
     return DATABASE_HOST;
@@ -107,6 +114,7 @@ public final class Config {
     SOLR_PATH = json.get("SOLR_PATH").toString().replace("\"", "");
     SOLR_CORE = json.get("SOLR_CORE").toString().replace("\"", "");
     PRODUCT_TTL = json.get("PRODUCT_TTL").getAsLong();
-    User_TTL = json.get("USER_TTL").getAsLong();
+    USER_TTL = json.get("USER_TTL").getAsLong();
+    ENCRYPTION_KEY = json.get("ENCRYPTION_KEY").getAsString();
   }
 }
