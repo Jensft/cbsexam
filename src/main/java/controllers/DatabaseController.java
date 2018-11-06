@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import com.mysql.cj.xdevapi.SqlDataResult;
 import utils.Config;
 
 public class DatabaseController {
@@ -98,7 +100,7 @@ public class DatabaseController {
       // Execute query
       result = statement.executeUpdate();
 
-      // Get our key back in order to update the user
+      // Get our key back in order to updateUser the user
       ResultSet generatedKeys = statement.getGeneratedKeys();
       if (generatedKeys.next()) {
         return generatedKeys.getInt(1);
@@ -109,5 +111,20 @@ public class DatabaseController {
 
     // Return the resultset which at this point will be null
     return result;
+  }
+
+  public Boolean deleteUpdate(String sqlSt) {
+    if (connection == null)
+      connection = getConnection();
+
+    try{
+      PreparedStatement deleteUpdate = connection.prepareStatement(sqlSt);
+      deleteUpdate.executeUpdate();
+      return true;
+    }
+    catch (SQLException e){
+      e.printStackTrace();
+      return false;
+    }
   }
 }

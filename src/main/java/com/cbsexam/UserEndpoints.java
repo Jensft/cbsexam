@@ -4,11 +4,7 @@ import cache.UserCache;
 import com.google.gson.Gson;
 import controllers.UserController;
 import java.util.ArrayList;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import model.User;
@@ -38,8 +34,13 @@ public class UserEndpoints {
     json = Encryption.encryptDecryptXOR(json);
 
     // Return the user with the status code 200
-    // TODO: What should happen if something breaks down?
-    return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
+    // TODO: What should happen if something breaks down? FIX
+    if (user != null) {
+      // Return a response with status 200 and JSON as type
+      return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
+    } else {
+      return Response.status(400).entity("Could not find the user with id: " +idUser).build();
+    }
   }
 
   /** @return Responses */
@@ -52,7 +53,7 @@ public class UserEndpoints {
 
     // Get a list of users with cache
     //ArrayList<User> users = UserController.getUsers();
-    ArrayList<User> users = userCache.getUsers(true);
+    ArrayList<User> users = userCache.getUsers(false);
 
     // TODO: Add Encryption to JSON FIX
     // Transfer users to json in order to return it to the user
@@ -96,17 +97,38 @@ public class UserEndpoints {
     return Response.status(400).entity("Endpoint not implemented yet").build();
   }
 
-  // TODO: Make the system able to delete users
-  public Response deleteUser(String x) {
+  // TODO: Make the system able to deleteUser users FIX
+  @DELETE
+  @Path("/deleteUser/{userId}")
+  @Consumes(MediaType.APPLICATION_JSON)
+  public Response deleteUser(@PathParam("userId") int id) {
+    Boolean delete = UserController.deleteUser(id);
 
-    // Return a response with status 200 and JSON as type
-    return Response.status(400).entity("Endpoint not implemented yet").build();
+    userCache.getUsers(true);
+
+    if(delete) {
+      return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("User " + id +" has been deleted ").build();
+    }else {
+      return Response.status(400).entity("User has not been found").build();
+    }
   }
 
-  // TODO: Make the system able to update users
-  public Response updateUser(String x) {
+  // TODO: Make the system able to updateUser users FIX
+  @POST
+  @Path("/updateUser/{userId}")
+  public Response updateUser(@PathParam("userId") int userId,String body) {
+    User user = new Gson().fromJson(body,User.class);
+
+    Boolean update =UserController.updateUser(user, userId);
+
+    userCache.getUsers(true);
+
 
     // Return a response with status 200 and JSON as type
-    return Response.status(400).entity("Endpoint not implemented yet").build();
+    if(update) {
+      return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("User  has been updated: " + body).build();
+    }else {
+      return Response.status(400).entity("User has not been updated").build();
+    }
   }
 }

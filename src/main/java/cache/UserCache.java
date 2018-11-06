@@ -6,7 +6,7 @@ import utils.Config;
 
 import java.util.ArrayList;
 
-//TODO: Build this cache and use it. Fix
+//TODO: Build this cache and use it. FIX
 public class UserCache {
 
     // List of users
@@ -26,9 +26,9 @@ public class UserCache {
     public ArrayList<User> getUsers (Boolean forceUpdate) {
         if (forceUpdate
                 || ((this.created + this.ttl) >= (System.currentTimeMillis() / 1000L))
-                || this.users.isEmpty()) {
+                || this.users == null) {
 
-            // Get users from controller, since we wish to update.
+            // Get users from controller, since we wish to updateUser.
             ArrayList<User> users = UserController.getUsers();
 
             // Set users for the instance and set created timestamp

@@ -24,21 +24,24 @@ public final class Config {
 
   //TTL for userCache
   private static long USER_TTL;
+  private static long ORDER_TTL;
 
   public static long getProductTtl() {
     return PRODUCT_TTL;
   }
 
   // get User TTL
-  public  static long getUser_TTL() {
+  public static long getUser_TTL() {
     return USER_TTL;
   }
+
+  // get Order TTL
+  public static long getOrder_TTL() {return ORDER_TTL;}
 
   // Encryption key
   public static char[] getEncryptionKey(){
     return ENCRYPTION_KEY.toCharArray();
   }
-
 
   public static String getDatabaseHost() {
     return DATABASE_HOST;
@@ -115,6 +118,7 @@ public final class Config {
     SOLR_CORE = json.get("SOLR_CORE").toString().replace("\"", "");
     PRODUCT_TTL = json.get("PRODUCT_TTL").getAsLong();
     USER_TTL = json.get("USER_TTL").getAsLong();
+    ORDER_TTL = json.get("ORDER_TTL").getAsLong();
     ENCRYPTION_KEY = json.get("ENCRYPTION_KEY").getAsString();
   }
 }
