@@ -2,9 +2,14 @@ package controllers;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
-import com.google.gson.Gson;
+import cache.UserCache;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
+
 import model.User;
 import utils.Hashing;
 import utils.Log;
@@ -136,9 +141,35 @@ public class UserController {
     return user;
   }
 
+  public static String login (User loginUser) {
+    Log.writeLog(UserController.class.getName(), loginUser, "Logging in", 0);
+
+    UserCache userCache = new UserCache();
+    ArrayList<User> users = userCache.getUsers(false);
+
+    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+    for(User user: users) {
+      if (user.getEmail().equals(loginUser.getEmail()) && user.getPassword().equals(Hashing.shaWithSalt(loginUser.getPassword()))) {
+
+        try {
+          Algorithm algorithm = Algorithm.HMAC256("JWT_TOKEN_KEY");
+          //String token = JWT.create().withIssuer("auth0").sign(algorithm);
+          String token = JWT.create().withClaim("Test",timestamp).sign(algorithm);
+
+          return token;
+
+        } catch (JWTCreationException exception) {
+          exception.getMessage();
+        }
+      }
+    }
+    return null;
+  }
+
 // implementing deleteUser method
 
-  public static Boolean deleteUser(int id) {
+  public static boolean deleteUser(int id) {
     Log.writeLog(UserController.class.getName(), id, "Deleting user", 0);
 
     // Checks the connection
@@ -158,7 +189,7 @@ public class UserController {
   }
 
   // implementing updateUser method
-  public static Boolean updateUser(User user, int userid) {
+  public static boolean updateUser(User user, int userid) {
     Log.writeLog(UserController.class.getName(), user, "Updating user", 0);
 
     if (dbCon == null) {
