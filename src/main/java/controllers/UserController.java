@@ -7,9 +7,12 @@ import java.util.ArrayList;
 
 import cache.UserCache;
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import model.User;
 import utils.Hashing;
 import utils.Log;
@@ -155,8 +158,9 @@ public class UserController {
         try {
           Algorithm algorithm = Algorithm.HMAC256("JWT_TOKEN_KEY");
           //String token = JWT.create().withIssuer("auth0").sign(algorithm);
-          String token = JWT.create().withClaim("Test",timestamp).sign(algorithm);
+          String token = JWT.create().withIssuer("auth0").withClaim("Test", timestamp).withClaim("etest", user.getId()).sign(algorithm);
 
+          user.setToken(token);
           return token;
 
         } catch (JWTCreationException exception) {
@@ -208,4 +212,25 @@ public class UserController {
       return false;
     }
   }
+
+  public static DecodedJWT verifier (String user) {
+
+    Log.writeLog(UserController.class.getName(), user, "Verifying token", 0);
+
+    String token = user;
+
+    try {
+      Algorithm algorithm = Algorithm.HMAC256("JWT_TOKEN_KEY");
+      JWTVerifier verifier = JWT.require(algorithm).withIssuer("auth0").build(); //Reusable verifier instance
+      DecodedJWT jwt = verifier.verify(token);
+
+      return jwt;
+    } catch (JWTVerificationException exception){
+      //Invalid signature/claims
+      exception.getMessage();
+    }
+
+    return null;
+  }
+
 }

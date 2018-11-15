@@ -1,12 +1,15 @@
 package com.cbsexam;
 
 import cache.UserCache;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.gson.Gson;
 import controllers.UserController;
+
 import java.util.ArrayList;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import model.User;
 import utils.Encryption;
 import utils.Log;
@@ -87,7 +90,7 @@ public class UserEndpoints {
     }
   }
 
-  // TODO: Make the system able to login users and assign them a token to use throughout the system.
+  // TODO: Make the system able to login users and assign them a token to use throughout the system. FIX
   @POST
   @Path("/login")
   @Consumes(MediaType.APPLICATION_JSON)
@@ -109,23 +112,29 @@ public class UserEndpoints {
   // TODO: Make the system able to deleteUser users FIX
   @DELETE
   @Path("/deleteUser/{userId}")
-  @Consumes(MediaType.APPLICATION_JSON)
-  public Response deleteUser(@PathParam("userId") int id) {
-    Boolean delete = UserController.deleteUser(id);
 
-    userCache.getUsers(true);
+  public Response deleteUser(@PathParam("userId") int id, String body) {
+    DecodedJWT token = UserController.verifier(body);
 
-    if(delete) {
-      return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("User " + id +" has been deleted ").build();
-    }else {
-      return Response.status(400).entity("User has not been found").build();
-    }
-  }
+
+    Boolean delete = UserController.deleteUser(token.getClaim("etest").asInt());
+
+
+      if (delete) {
+        userCache.getUsers(true);
+        return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("User " + id + " has been deleted ").build();
+
+        }
+        return Response.status(400).entity("User has not been found").build();
+      }
+
+
+
 
   // TODO: Make the system able to updateUser users FIX
   @POST
-  @Path("/updateUser/{userId}")
-  public Response updateUser(@PathParam("userId") int userId,String body) {
+  @Path("/updateUser/{userId}/{token}")
+  public Response updateUser(@PathParam("userId" + "token") int userId,DecodedJWT token, String body) {
     User user = new Gson().fromJson(body,User.class);
 
     Boolean update =UserController.updateUser(user, userId);
