@@ -38,6 +38,7 @@ public class UserEndpoints {
 
     // Return the user with the status code 200
     // TODO: What should happen if something breaks down? FIX
+    // If something is incorrect, it will return the response status 400
     if (user != null) {
       // Return a response with status 200 and JSON as type
       return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
@@ -96,9 +97,14 @@ public class UserEndpoints {
   @Consumes(MediaType.APPLICATION_JSON)
 
   public Response loginUser(String body) {
+    // The method reads the details from the json body
     User loginUser = new Gson().fromJson(body, User.class);
+
+    // login method returns a token if the login is completed and sets it = token
+    // The method uses the body from loginUser
     String token = UserController.login(loginUser);
 
+      //If the token is incorrect returns 200 and 400 if it's correct.
       if (token!=null) {
         return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("Email and password are correct. You are now logged in with token: \n " + token ).build();
       } else {
@@ -114,9 +120,10 @@ public class UserEndpoints {
   @Path("/deleteUser/{userId}")
 
   public Response deleteUser(@PathParam("userId") int id, String body) {
+    // Runs the method to check if token/body matches the logged in users token
     DecodedJWT token = UserController.verifier(body);
 
-
+    // Uses the user id from the token
     Boolean delete = UserController.deleteUser(token.getClaim("etest").asInt());
 
 
@@ -133,8 +140,8 @@ public class UserEndpoints {
 
   // TODO: Make the system able to updateUser users FIX
   @POST
-  @Path("/updateUser/{userId}/{token}")
-  public Response updateUser(@PathParam("userId" + "token") int userId,DecodedJWT token, String body) {
+  @Path("/updateUser/{userId}")
+  public Response updateUser(@PathParam("userId" + "token") int userId,String body) {
     User user = new Gson().fromJson(body,User.class);
 
     Boolean update =UserController.updateUser(user, userId);

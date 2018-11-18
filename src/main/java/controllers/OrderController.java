@@ -41,7 +41,7 @@ public class OrderController {
         Address billingAddress = AddressController.getAddress(rs.getInt("billing_address_id"));
         Address shippingAddress = AddressController.getAddress(rs.getInt("shipping_address_id"));
 
-        // Create an object instance of order from the database dataa
+        // Create an object instance of order from the database data
         order =
             new Order(
                 rs.getInt("id"),
@@ -118,7 +118,7 @@ public class OrderController {
   public static Order createOrder(Order order) {
 
     // Write in log that we've reach this step
-    Log.writeLog(OrderController.class.getName(), order, "Actually creating a order in DB", 0);
+    Log.writeLog(OrderController.class.getName(), order, "Creating a order in DB", 0);
 
     // Set creation and updated time for order.
     order.setCreatedAt(System.currentTimeMillis() / 1000L);
@@ -140,7 +140,7 @@ public class OrderController {
 
     Connection connection = null;
 
-    // Insert the product in the DB
+    //Auto commit is set to false to prevent if something fails in the insert statement
     try {
       connection.setAutoCommit(false);
 
@@ -175,11 +175,13 @@ public class OrderController {
 
       order.setLineItems(items);
 
+      // Now we can commit the order
       connection.commit();
 
 
     } catch (SQLException e){
       try {
+        // The connection will rollback if something fails
         connection.rollback();
         System.out.println("Rolled back the changes");
       } catch (SQLException ex) {

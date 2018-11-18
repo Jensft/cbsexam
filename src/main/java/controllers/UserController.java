@@ -118,6 +118,7 @@ public class UserController {
     }
 
     // Insert the user in the DB
+    // The password is hashed with salt through the sha256 method
     // TODO: Hash the user password before saving it. FIX
     int userID = dbCon.insert(
             "INSERT INTO user(first_name, last_name, password, email, created_at) VALUES('"
@@ -147,23 +148,31 @@ public class UserController {
   public static String login (User loginUser) {
     Log.writeLog(UserController.class.getName(), loginUser, "Logging in", 0);
 
+    //Creates an instance of the user cache
     UserCache userCache = new UserCache();
     ArrayList<User> users = userCache.getUsers(false);
 
+    // Timestamp for the token
     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
+    //The for loop iterates the user cache through.
     for(User user: users) {
+      //If it finds the matching email and password it will proceed to the try catch.
       if (user.getEmail().equals(loginUser.getEmail()) && user.getPassword().equals(Hashing.shaWithSalt(loginUser.getPassword()))) {
 
         try {
+          // creating an instance of "Algorithm"
           Algorithm algorithm = Algorithm.HMAC256("JWT_TOKEN_KEY");
-          //String token = JWT.create().withIssuer("auth0").sign(algorithm);
+
+          //Sets a timestamp and a user-id for the token
           String token = JWT.create().withIssuer("auth0").withClaim("Test", timestamp).withClaim("etest", user.getId()).sign(algorithm);
 
           user.setToken(token);
           return token;
 
         } catch (JWTCreationException exception) {
+
+          //Invalid signature/claims
           exception.getMessage();
         }
       }
@@ -171,7 +180,7 @@ public class UserController {
     return null;
   }
 
-// implementing deleteUser method
+// The implemented deleteUser method
 
   public static boolean deleteUser(int id) {
     Log.writeLog(UserController.class.getName(), id, "Deleting user", 0);
@@ -183,7 +192,7 @@ public class UserController {
     // Creating a user object
     User user = UserController.getUser(id);
 
-    // if user exist the if statement will return true or otherwise it will return false.
+    // if the user exist the if statement will return true or otherwise false.
     if (user != null) {
       dbCon.deleteUpdate("DELETE FROM user WHERE id=" + id);
       return true;
@@ -216,17 +225,19 @@ public class UserController {
   public static DecodedJWT verifier (String user) {
 
     Log.writeLog(UserController.class.getName(), user, "Verifying token", 0);
-
+    // Enables the method to verify the token, the string is the inserted token.
     String token = user;
 
     try {
+      // Verifying the token
       Algorithm algorithm = Algorithm.HMAC256("JWT_TOKEN_KEY");
-      JWTVerifier verifier = JWT.require(algorithm).withIssuer("auth0").build(); //Reusable verifier instance
+      JWTVerifier verifier = JWT.require(algorithm).withIssuer("auth0").build();
       DecodedJWT jwt = verifier.verify(token);
 
       return jwt;
     } catch (JWTVerificationException exception){
-      //Invalid signature/claims
+
+      //Incorrect claims
       exception.getMessage();
     }
 

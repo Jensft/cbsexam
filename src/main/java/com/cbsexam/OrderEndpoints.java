@@ -33,6 +33,7 @@ public class OrderEndpoints {
     // TODO: Add Encryption to JSON FIX
     // We convert the java object to json with GSON library imported in Maven
     String json = new Gson().toJson(order);
+    // the object is encrypted with the encryptDecrypt method
     json = Encryption.encryptDecryptXOR(json);
 
     // Return a response with status 200 and JSON as type

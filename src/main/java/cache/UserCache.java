@@ -23,6 +23,9 @@ public class UserCache {
     }
 
 
+    // Force updateUser clears the cache when set to true
+    // However, the age of the cache is determined and the result says if we should updateUser.
+    // If the list is empty/null it will also check for new products
     public ArrayList<User> getUsers (Boolean forceUpdate) {
         if (forceUpdate
                 || ((this.created + this.ttl) >= (System.currentTimeMillis() / 1000L))
@@ -36,7 +39,7 @@ public class UserCache {
             this.created = System.currentTimeMillis() / 1000L;
         }
 
-        // Return the documents
+        // Return the users
         return this.users;
     }
 

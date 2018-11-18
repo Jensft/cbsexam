@@ -11,6 +11,7 @@ public final class Hashing {
 
   // TODO: You should add a salt and make this secure FIX
   public static String md5WithSalt (String str){
+    // A static salt
     String salt = "gh23173ajk23h1lk21";
     String hashedPSW = str + salt;
     return md5(hashedPSW);
@@ -19,7 +20,7 @@ public final class Hashing {
   public static String md5(String rawString) {
     try {
 
-      // We load the hashing algoritm we wish to use.
+      // We load the hashing algorithm we wish to use.
       MessageDigest md = MessageDigest.getInstance("MD5");
 
       // We convert to byte array
