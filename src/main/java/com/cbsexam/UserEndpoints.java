@@ -140,11 +140,13 @@ public class UserEndpoints {
 
   // TODO: Make the system able to updateUser users FIX
   @POST
-  @Path("/updateUser/{userId}")
-  public Response updateUser(@PathParam("userId" + "token") int userId,String body) {
+  @Path("/updateUser/{userId}/{token}")
+  public Response updateUser(@PathParam("userId") int userId,@PathParam("token") String token, String body) {
     User user = new Gson().fromJson(body,User.class);
 
-    Boolean update =UserController.updateUser(user, userId);
+    DecodedJWT jwt = UserController.verifier(token);
+
+    Boolean update =UserController.updateUser(user, jwt.getClaim("etest").asInt());
 
     userCache.getUsers(true);
 

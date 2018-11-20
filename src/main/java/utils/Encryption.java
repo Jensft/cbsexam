@@ -16,7 +16,8 @@ public final class Encryption {
       StringBuilder thisIsEncrypted = new StringBuilder();
 
       // TODO: This is where the magic of XOR is happening. Are you able to explain what is going on? FIX
-      /* The for loop determines the length of the string.
+      /*
+      The for loop determines the length of the string.
       Afterwards it adds the encryptionkeys value to each char in the given string.
       */
 
