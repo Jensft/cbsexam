@@ -122,9 +122,9 @@ public class UserEndpoints {
   public Response deleteUser(@PathParam("userId") int id, String body) {
     // Runs the method to check if token/body matches the logged in users token
     DecodedJWT token = UserController.verifier(body);
-
-    // Uses the user id from the token
-    Boolean delete = UserController.deleteUser(token.getClaim("etest").asInt());
+    if(token.getClaim("etest").asInt()==id){
+      // Uses the user id from the token
+      Boolean delete = UserController.deleteUser(token.getClaim("etest").asInt());
 
 
       if (delete) {
@@ -134,7 +134,10 @@ public class UserEndpoints {
         }
         return Response.status(400).entity("User has not been found").build();
       }
-
+      else {
+        return Response.status(400).entity("You cannot delete other users").build();
+    }
+  }
 
 
 
