@@ -19,6 +19,7 @@ public final class Encryption {
       /*
       The for loop determines the length of the string.
       Afterwards it adds the encryptionkeys value to each char in the given string.
+      Look in the report for a more in dept explanation
       */
 
       for (int i = 0; i < rawString.length(); i++) {

@@ -48,6 +48,7 @@ public final class Hashing {
 
   // TODO: You should add a salt and make this secure FIX
   public static String shaWithSalt (String str){
+    // A static salt
     String salt = "gh23173ajk23h1lk21";
     String hashedPSW = str + salt;
     return sha(hashedPSW);

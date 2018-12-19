@@ -43,11 +43,13 @@ public class UserEndpoints {
       // Return a response with status 200 and JSON as type
       return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
     } else {
-      return Response.status(400).entity("Could not find the user with id: " +idUser).build();
+      return Response.status(400).entity("Could not find the user with id: " + idUser).build();
     }
   }
 
-  /** @return Responses */
+  /**
+   * @return Responses
+   */
   @GET
   @Path("/")
   public Response getUsers() {
@@ -84,6 +86,8 @@ public class UserEndpoints {
 
     // Return the data to the user
     if (createUser != null) {
+      // The Cache will be updated
+      userCache.getUsers(true);
       // Return a response with status 200 and JSON as type
       return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
     } else {
@@ -104,15 +108,13 @@ public class UserEndpoints {
     // The method uses the body from loginUser
     String token = UserController.login(loginUser);
 
-      //If the token is incorrect returns 200 and 400 if it's correct.
-      if (token!=null) {
-        return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("Email and password are correct. You are now logged in with token: \n " + token ).build();
-      } else {
-        return Response.status(400).entity("Incorrect password or email - Try again").build();
-      }
+    //If the token is incorrect returns 200 and 400 if it's correct.
+    if (token != null) {
+      return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("Email and password are correct. You are now logged in with token: \n " + token).build();
+    } else {
+      return Response.status(400).entity("Incorrect password or email - Try again").build();
     }
-
-
+  }
 
 
   // TODO: Make the system able to deleteUser users FIX
@@ -122,7 +124,7 @@ public class UserEndpoints {
   public Response deleteUser(@PathParam("userId") int id, String body) {
     // Runs the method to check if token/body matches the logged in users token
     DecodedJWT token = UserController.verifier(body);
-    if(token.getClaim("etest").asInt()==id){
+    if (token.getClaim("etest").asInt() == id) {
       // Uses the user id from the token
       Boolean delete = UserController.deleteUser(token.getClaim("etest").asInt());
 
@@ -131,34 +133,38 @@ public class UserEndpoints {
         userCache.getUsers(true);
         return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("User " + id + " has been deleted ").build();
 
-        }
-        return Response.status(400).entity("User has not been found").build();
       }
-      else {
-        return Response.status(400).entity("You cannot delete other users").build();
+      return Response.status(400).entity("User has not been found").build();
+    } else {
+      return Response.status(400).entity("You cannot delete other users").build();
     }
   }
-
 
 
   // TODO: Make the system able to updateUser users FIX
   @POST
   @Path("/updateUser/{userId}/{token}")
-  public Response updateUser(@PathParam("userId") int userId,@PathParam("token") String token, String body) {
-    User user = new Gson().fromJson(body,User.class);
+  public Response updateUser(@PathParam("userId") int userId, @PathParam("token") String token, String body) {
+    User user = new Gson().fromJson(body, User.class);
 
     DecodedJWT jwt = UserController.verifier(token);
 
-    Boolean update =UserController.updateUser(user, jwt.getClaim("etest").asInt());
+    if (jwt.getClaim("etest").asInt() == userId) {
 
-    userCache.getUsers(true);
+      Boolean update = UserController.updateUser(user, jwt.getClaim("etest").asInt());
+
+      userCache.getUsers(true);
 
 
-    // Return a response with status 200 and JSON as type
-    if(update) {
-      return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("User  has been updated: " + body).build();
-    }else {
-      return Response.status(400).entity("User has not been updated").build();
+      // Return a response with status 200 and JSON as type
+      if (update) {
+        return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("User  has been updated: " + body).build();
+      } else {
+        return Response.status(400).entity("User has not been updated").build();
+      }
+    } else {
+      return Response.status(400).entity("You cannot update other users").build();
     }
   }
 }
+

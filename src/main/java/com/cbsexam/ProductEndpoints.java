@@ -35,6 +35,8 @@ public class ProductEndpoints {
     // TODO: Add Encryption to JSON FIX
     // We convert the java object to json with GSON library imported in Maven
     String json = new Gson().toJson(product);
+
+    //the json object is encrypted with XOR algorithm
     json = Encryption.encryptDecryptXOR(json);
 
     // Return a response with status 200 and JSON as type
@@ -54,6 +56,8 @@ public class ProductEndpoints {
     // TODO: Add Encryption to JSON FIX
     // We convert the java object to json with GSON library imported in Maven
     String json = new Gson().toJson(products);
+
+    //the json object is encrypted with XOR algorithm
     json = Encryption.encryptDecryptXOR(json);
 
     // Return a response with status 200 and JSON as type
@@ -76,10 +80,14 @@ public class ProductEndpoints {
 
     // Return the data to the user
     if (createdProduct != null) {
+
+      // Updates the cache after the product is created
+      productCache.getProducts(true);
+
       // Return a response with status 200 and JSON as type
       return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
     } else {
-      return Response.status(400).entity("Could not create user").build();
+      return Response.status(400).entity("Could not create product").build();
     }
   }
 }

@@ -45,12 +45,15 @@ public class OrderEndpoints {
   @Path("/")
   public Response getOrders() {
 
-    // Call our OrderCache-layer in order to recieve the cache
+    // Call our OrderCache-layer in order to receive the cache
+    //The forceupdate is set to false because we want to use the cache
     ArrayList<Order> orders = orderCache.getOrders(false);
 
     // TODO: Add Encryption to JSON FIX
     // We convert the java object to json with GSON library imported in Maven
     String json = new Gson().toJson(orders);
+
+    //the json object is encrypted with XOR algorithm
     json = Encryption.encryptDecryptXOR(json);
 
     // Return a response with status 200 and JSON as type
@@ -73,6 +76,10 @@ public class OrderEndpoints {
 
     // Return the data to the user
     if (createdOrder != null) {
+
+      // When order is created the order-cache is set to force update.
+      orderCache.getOrders(true);
+
       // Return a response with status 200 and JSON as type
       return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
     } else {

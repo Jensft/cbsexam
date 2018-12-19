@@ -113,10 +113,14 @@ public class DatabaseController {
     return result;
   }
 
+  // deleteUpdate is created beceause the two methods doesnt return an object.
   public Boolean deleteUpdate(String sqlSt) {
+
+    // Check that we have connection
     if (connection == null)
       connection = getConnection();
 
+    // Builds the statement and executes it
     try{
       PreparedStatement deleteUpdate = connection.prepareStatement(sqlSt);
       deleteUpdate.executeUpdate();

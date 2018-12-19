@@ -27,6 +27,8 @@ public class ReviewEndpoints {
     // TODO: Add Encryption to JSON FIX
     // We convert the java object to json with GSON library imported in Maven
     String json = new Gson().toJson(reviews);
+
+    //the json object is encrypted with XOR algorithm
     json = Encryption.encryptDecryptXOR(json);
 
     // Return a response with status 200 and JSON as type

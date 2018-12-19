@@ -27,7 +27,7 @@ public class OrderCache {
         // However, the age of the cache is determined and the result says if we should updateUser.
         // If the list is empty/null it will also check for new products
         if (forceUpdate
-                || ((this.created + this.ttl) >= (System.currentTimeMillis() / 1000L))
+                || ((this.created + this.ttl) <= (System.currentTimeMillis() / 1000L))
                 || this.orders == null) {
 
             // Get orders from controller, since we wish to updateOrders.

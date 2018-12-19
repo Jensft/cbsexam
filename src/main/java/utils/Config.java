@@ -24,9 +24,10 @@ public final class Config {
 
   //TTL for userCache
   private static long USER_TTL;
+
   private static long ORDER_TTL;
 
-  public static long getProductTtl() {
+  public static long getProduct_TTL() {
     return PRODUCT_TTL;
   }
 
@@ -36,7 +37,9 @@ public final class Config {
   }
 
   // get Order TTL
-  public static long getOrder_TTL() {return ORDER_TTL;}
+  public static long getOrder_TTL() {
+    return ORDER_TTL;
+  }
 
   // Encryption key
   public static char[] getEncryptionKey(){
