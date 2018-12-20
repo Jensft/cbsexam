@@ -110,7 +110,7 @@ public class UserEndpoints {
 
     //If the token is incorrect returns 200 and 400 if it's correct.
     if (token != null) {
-      return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("Email and password are correct. You are now logged in with token: \n " + token).build();
+      return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(token).build();
     } else {
       return Response.status(400).entity("Incorrect password or email - Try again").build();
     }
@@ -119,14 +119,14 @@ public class UserEndpoints {
 
   // TODO: Make the system able to deleteUser users FIX
   @DELETE
-  @Path("/deleteUser/{userId}")
+  @Path("/deleteUser/{userId}/{token}")
 
-  public Response deleteUser(@PathParam("userId") int id, String body) {
+  public Response deleteUser(@PathParam("userId") int id, @PathParam("token") String token) {
     // Runs the method to check if token/body matches the logged in users token
-    DecodedJWT token = UserController.verifier(body);
-    if (token.getClaim("etest").asInt() == id) {
+    DecodedJWT jwt = UserController.verifier(token);
+    if (jwt.getClaim("etest").asInt() == id) {
       // Uses the user id from the token
-      Boolean delete = UserController.deleteUser(token.getClaim("etest").asInt());
+      Boolean delete = UserController.deleteUser(jwt.getClaim("etest").asInt());
 
 
       if (delete) {
