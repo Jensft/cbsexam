@@ -122,11 +122,13 @@ public class UserEndpoints {
   @Path("/deleteUser/{userId}/{token}")
 
   public Response deleteUser(@PathParam("userId") int id, @PathParam("token") String token) {
-    // Runs the method to check if token/body matches the logged in users token
+    // Runs the method to check if token matches the logged in users token
     DecodedJWT jwt = UserController.verifier(token);
     if (jwt.getClaim("etest").asInt() == id) {
+
       // Uses the user id from the token
       Boolean delete = UserController.deleteUser(jwt.getClaim("etest").asInt());
+
 
 
       if (delete) {
@@ -147,16 +149,17 @@ public class UserEndpoints {
   public Response updateUser(@PathParam("userId") int userId, @PathParam("token") String token, String body) {
     User user = new Gson().fromJson(body, User.class);
 
+    // Runs the method to check if token matches the logged in users token
     DecodedJWT jwt = UserController.verifier(token);
-
     if (jwt.getClaim("etest").asInt() == userId) {
 
+      // Uses the user id from the token
       Boolean update = UserController.updateUser(user, jwt.getClaim("etest").asInt());
 
       userCache.getUsers(true);
 
 
-      // Return a response with status 200 and JSON as type
+      
       if (update) {
         return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("User  has been updated: " + body).build();
       } else {
