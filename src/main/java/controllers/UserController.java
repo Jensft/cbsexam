@@ -167,7 +167,7 @@ public class UserController {
           Algorithm algorithm = Algorithm.HMAC256("JWT_TOKEN_KEY");
 
           //Sets a timestamp and a user-id for the token
-          String token = JWT.create().withIssuer("auth0").withClaim("Test", timestamp).withClaim("etest", user.getId()).sign(algorithm);
+          String token = JWT.create().withIssuer("auth0").withClaim("Test", timestamp).withClaim("userid", user.getId()).sign(algorithm);
 
           user.setToken(token);
           return token;

@@ -86,8 +86,6 @@ public class OrderController {
     try {
       while(rs.next()) {
 
-        // Perhaps we could optimize things a bit here and get rid of nested queries.
-        // Instead of making 4 SQL calls we can reduce it to one.
         User user = UserController.getUser(rs.getInt("user_id"));
         ArrayList<LineItem> lineItems = LineItemController.getLineItemsForOrder(rs.getInt("id"));
         Address billingAddress = AddressController.getAddress(rs.getInt("billing_address_id"));
@@ -132,11 +130,9 @@ public class OrderController {
     if (dbCon == null) {
       dbCon = new DatabaseController();
     }
-
     // TODO: Enable transactions in order for us to not save the order if somethings fails for some of the other inserts. FIX
     // Creates a connection object
     Connection connection = DatabaseController.getConnection();
-
     try {
       //Auto commit is set to false to prevent if something fails in the insert statement
       connection.setAutoCommit(false);

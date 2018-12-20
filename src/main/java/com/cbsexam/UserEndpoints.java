@@ -124,10 +124,10 @@ public class UserEndpoints {
   public Response deleteUser(@PathParam("userId") int id, @PathParam("token") String token) {
     // Runs the method to check if token matches the logged in users token
     DecodedJWT jwt = UserController.verifier(token);
-    if (jwt.getClaim("etest").asInt() == id) {
+    if (jwt.getClaim("userid").asInt() == id) {
 
       // Uses the user id from the token
-      Boolean delete = UserController.deleteUser(jwt.getClaim("etest").asInt());
+      Boolean delete = UserController.deleteUser(jwt.getClaim("userid").asInt());
 
 
 
@@ -151,15 +151,14 @@ public class UserEndpoints {
 
     // Runs the method to check if token matches the logged in users token
     DecodedJWT jwt = UserController.verifier(token);
-    if (jwt.getClaim("etest").asInt() == userId) {
+    if (jwt.getClaim("userid").asInt() == userId) {
 
       // Uses the user id from the token
-      Boolean update = UserController.updateUser(user, jwt.getClaim("etest").asInt());
+      Boolean update = UserController.updateUser(user, jwt.getClaim("userid").asInt());
 
       userCache.getUsers(true);
 
 
-      
       if (update) {
         return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("User  has been updated: " + body).build();
       } else {
